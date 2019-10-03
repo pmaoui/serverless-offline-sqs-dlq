@@ -1,4 +1,4 @@
-# serverless-offline-sqs
+# serverless-offline-sqs-dlq
 
 This Serverless-offline plugin brings [Dead-Letter Queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) to AWS λ and SQS queue on your local machine. It extends [serverless-offline-sqs](https://github.com/CoorpAcademy/serverless-plugins/tree/master/packages/serverless-offline-sqs) and thus depends on it.
 

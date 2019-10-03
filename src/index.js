@@ -74,11 +74,10 @@ class ServerlessOfflineSQSDLQ {
           try {
             ({QueueUrl} = await client
               .getQueueUrl({
-                QueueName: extractQueueNameFromARN(QueueArn) + 'lol',
+                QueueName: extractQueueNameFromARN(QueueArn),
               })
               .promise());
           } catch (e) {
-            this.serverless.cli.log('catch ' + attempts);
             if (attempts === GET_QUEUES_MAX_RETRIES) {
               throw e;
             }

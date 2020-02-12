@@ -38,7 +38,11 @@ class ServerlessOfflineSQSDLQ {
           this.serverless.cli.log(`λ not found: ${functionName}.`);
           return;
         }
-        const QueueArn = func.events.map(e => e.sqs).filter(f => f)[0];
+        let QueueArn = func.events.map(e => e.sqs).filter(f => f)[0];
+        if (typeof QueueArn !== 'string' && QueueArn.arn !== undefined) {
+          QueueArn = QueueArn.arn
+        }
+
         if (!QueueArn) {
           this.serverless.cli.log(
             `λ without SQS event source: ${functionName}.`,
@@ -52,9 +56,13 @@ class ServerlessOfflineSQSDLQ {
           );
           return;
         }
-        const DeadLetterQueueArn = funcDLQ.events
+        let DeadLetterQueueArn = funcDLQ.events
           .map(e => e.sqs)
           .filter(f => f)[0];
+
+          if (typeof DeadLetterQueueArn !== 'string' && DeadLetterQueueArn.arn !== undefined) {
+            DeadLetterQueueArn = DeadLetterQueueArn.arn
+          }
 
         if (!DeadLetterQueueArn) {
           this.serverless.cli.log(

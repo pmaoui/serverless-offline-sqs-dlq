@@ -1,9 +1,21 @@
-const SQS = require('aws-sdk/clients/sqs')
+const SQS = require("aws-sdk/clients/sqs");
+const { get } = require('lodash/fp')
 
-const extractQueueNameFromARN = (arn) => {
-  const [, , , , , QueueName] = arn.split(':')
-  return QueueName
-}
+const extractQueueNameFromARN = (arn, service) => {
+  const getAtt = get(["Fn::GetAtt"], arn);
+  if (getAtt) {
+    const [resourceName] = getAtt;
+    const properties = get(
+      ["resources", "Resources", resourceName, "Properties"],
+      service
+    );
+    const { QueueName } = properties;
+    return QueueName;
+  } else {
+    const [, , , , , QueueName] = arn.split(":");
+    return QueueName;
+  }
+};
 
 const GET_QUEUES_MAX_RETRIES = 5
 
@@ -86,7 +98,7 @@ class ServerlessOfflineSQSDLQ {
             // eslint-disable-next-line no-await-in-loop
             ;({ QueueUrl } = await client
               .getQueueUrl({
-                QueueName: extractQueueNameFromARN(QueueArn),
+                QueueName: extractQueueNameFromARN(QueueArn,this.service),
               })
               .promise())
           } catch (e) {
@@ -117,7 +129,11 @@ class ServerlessOfflineSQSDLQ {
   }
 
   offlineStartEnd() {
+<<<<<<< HEAD
     this.serverless.cli.log('offline-start-end')
+=======
+    this.serverless.cli.log("offline-start-end");
+>>>>>>> support getting QueueName via Fn::GetAtt refs
   }
 }
 

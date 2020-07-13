@@ -76,7 +76,20 @@ class ServerlessOfflineSQSDLQ {
           typeof DeadLetterQueueArn !== 'string' &&
           DeadLetterQueueArn.arn !== undefined
         ) {
-          DeadLetterQueueArn = DeadLetterQueueArn.arn
+          const getAtt = get(["Fn::GetAtt"], QueueArn);
+          if (getAtt) {
+            const [resourceName] = getAtt;
+            const properties = get(
+              ["resources", "Resources", resourceName, "Properties"],
+              this.service
+            );
+            console.log(properties);
+            const { QueueName } = properties;
+
+            DeadLetterQueueArn = QueueName;
+          } else {
+            DeadLetterQueueArn = DeadLetterQueueArn.arn;
+          }
         }
 
         if (!DeadLetterQueueArn) {
@@ -98,7 +111,7 @@ class ServerlessOfflineSQSDLQ {
             // eslint-disable-next-line no-await-in-loop
             ;({ QueueUrl } = await client
               .getQueueUrl({
-                QueueName: extractQueueNameFromARN(QueueArn,this.service),
+                QueueName: extractQueueNameFromARN(QueueArn, this.service),
               })
               .promise())
           } catch (e) {

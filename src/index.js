@@ -1,6 +1,5 @@
 const SQS = require("aws-sdk/clients/sqs");
-const { get } = require('lodash/fp')
-
+const { get } = require("lodash/fp");
 const extractQueueNameFromARN = (arn, service) => {
   const getAtt = get(["Fn::GetAtt"], arn);
   if (getAtt) {
@@ -76,14 +75,13 @@ class ServerlessOfflineSQSDLQ {
           typeof DeadLetterQueueArn !== 'string' &&
           DeadLetterQueueArn.arn !== undefined
         ) {
-          const getAtt = get(["Fn::GetAtt"], QueueArn);
+          const getAtt = get(["Fn::GetAtt"], DeadLetterQueueArn.arn);
           if (getAtt) {
             const [resourceName] = getAtt;
             const properties = get(
               ["resources", "Resources", resourceName, "Properties"],
               this.service
             );
-            console.log(properties);
             const { QueueName } = properties;
 
             DeadLetterQueueArn = QueueName;
@@ -142,11 +140,7 @@ class ServerlessOfflineSQSDLQ {
   }
 
   offlineStartEnd() {
-<<<<<<< HEAD
-    this.serverless.cli.log('offline-start-end')
-=======
     this.serverless.cli.log("offline-start-end");
->>>>>>> support getting QueueName via Fn::GetAtt refs
   }
 }
 

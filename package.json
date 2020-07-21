@@ -6,7 +6,8 @@
     "serverless-offline-sqs": "^3.0.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.538.0"
+    "aws-sdk": "^2.538.0",
+    "prettier": "^2.0.5"
   },
   "description": "Enable Dead-Letter-Queue with AWS λ and SQS locally when developing your Serverless project",
   "files": [

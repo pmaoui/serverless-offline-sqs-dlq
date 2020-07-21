@@ -83,6 +83,7 @@ class ServerlessOfflineSQSDLQ {
         while (!QueueUrl && attempts < GET_QUEUES_MAX_RETRIES) {
           attempts += 1
           try {
+            // eslint-disable-next-line no-await-in-loop
             ;({ QueueUrl } = await client
               .getQueueUrl({
                 QueueName: extractQueueNameFromARN(QueueArn),
@@ -93,6 +94,7 @@ class ServerlessOfflineSQSDLQ {
               throw e
             }
           }
+          // eslint-disable-next-line no-await-in-loop
           await sleep(1000)
         }
         try {

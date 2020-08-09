@@ -10,7 +10,6 @@
     "serverless-offline": "^5.11.0",
     "serverless-offline-sqs": "^3.0.0"
   },
-<<<<<<< HEAD
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^7.5.0",
@@ -19,11 +18,6 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5"
-=======
-  "dependencies": {
-    "aws-sdk": "^2.538.0",
-    "lodash": "^4.17.19"
->>>>>>> fix: correct dlq queue name
   },
   "description": "Enable Dead-Letter-Queue with AWS λ and SQS locally when developing your Serverless project",
   "files": [
@@ -41,9 +35,5 @@
     "type": "git",
     "url": "git+ssh://git@github.com/poupougnac/serverless-offline-sqs-dlq.git"
   },
-<<<<<<< HEAD
   "version": "1.2.0"
-=======
-  "version": "1.2.3"
->>>>>>> fix: correct dlq queue name
 }

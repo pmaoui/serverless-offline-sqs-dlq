@@ -1,20 +1,20 @@
-const SQS = require("aws-sdk/clients/sqs");
-const { get } = require("lodash/fp");
+const SQS = require('aws-sdk/clients/sqs')
+const { get } = require('lodash/fp')
 const extractQueueNameFromARN = (arn, service) => {
-  const getAtt = get(["Fn::GetAtt"], arn);
+  const getAtt = get(['Fn::GetAtt'], arn)
   if (getAtt) {
-    const [resourceName] = getAtt;
+    const [resourceName] = getAtt
     const properties = get(
-      ["resources", "Resources", resourceName, "Properties"],
-      service
-    );
-    const { QueueName } = properties;
-    return QueueName;
+      ['resources', 'Resources', resourceName, 'Properties'],
+      service,
+    )
+    const { QueueName } = properties
+    return QueueName
   } else {
-    const [, , , , , QueueName] = arn.split(":");
-    return QueueName;
+    const [, , , , , QueueName] = arn.split(':')
+    return QueueName
   }
-};
+}
 
 const GET_QUEUES_MAX_RETRIES = 5
 
@@ -75,18 +75,18 @@ class ServerlessOfflineSQSDLQ {
           typeof DeadLetterQueueArn !== 'string' &&
           DeadLetterQueueArn.arn !== undefined
         ) {
-          const getAtt = get(["Fn::GetAtt"], DeadLetterQueueArn.arn);
+          const getAtt = get(['Fn::GetAtt'], DeadLetterQueueArn.arn)
           if (getAtt) {
-            const [resourceName] = getAtt;
+            const [resourceName] = getAtt
             const properties = get(
-              ["resources", "Resources", resourceName, "Properties"],
-              this.service
-            );
-            const { QueueName } = properties;
+              ['resources', 'Resources', resourceName, 'Properties'],
+              this.service,
+            )
+            const { QueueName } = properties
 
-            DeadLetterQueueArn = QueueName;
+            DeadLetterQueueArn = QueueName
           } else {
-            DeadLetterQueueArn = DeadLetterQueueArn.arn;
+            DeadLetterQueueArn = DeadLetterQueueArn.arn
           }
         }
 
@@ -140,7 +140,7 @@ class ServerlessOfflineSQSDLQ {
   }
 
   offlineStartEnd() {
-    this.serverless.cli.log("offline-start-end");
+    this.serverless.cli.log('offline-start-end')
   }
 }
 

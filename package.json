@@ -1,5 +1,5 @@
 {
-  "name": "@you54f/serverless-offline-sqs-dlq",
+  "name": "serverless-offline-sqs-dlq",
   "homepage": "https://github.com/poupougnac/serverless-offline-sqs-dlq#readme",
   "scripts": {
     "lint": "eslint ."

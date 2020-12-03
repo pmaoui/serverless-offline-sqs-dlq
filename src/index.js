@@ -1,8 +1,22 @@
 const SQS = require('aws-sdk/clients/sqs')
+const { get } = require('lodash/fp')
 
-const extractQueueNameFromARN = (arn) => {
-  const [, , , , , QueueName] = arn.split(':')
-  return QueueName
+const extractQueueNameFromARN = (arn, service) => {
+  const getAtt = get(['Fn::GetAtt'], arn)
+  if (getAtt) {
+    const [resourceName] = getAtt
+    const properties = get(
+      ['resources', 'Resources', resourceName, 'Properties'],
+      service,
+    )
+    if (properties && properties.QueueName) {
+      return properties.QueueName
+    }
+    return resourceName
+  } else {
+    const [, , , , , QueueName] = arn.split(':')
+    return QueueName
+  }
 }
 
 const GET_QUEUES_MAX_RETRIES = 5
@@ -39,8 +53,10 @@ class ServerlessOfflineSQSDLQ {
           return
         }
         let QueueArn = func.events.map((e) => e.sqs).filter((f) => f)[0]
+        let QueueName
         if (typeof QueueArn !== 'string' && QueueArn.arn !== undefined) {
           QueueArn = QueueArn.arn
+          QueueName = QueueArn.QueueName
         }
 
         if (!QueueArn) {
@@ -48,6 +64,9 @@ class ServerlessOfflineSQSDLQ {
             `λ without SQS event source: ${functionName}.`,
           )
           return
+        }
+        if (!QueueName) {
+          QueueName = extractQueueNameFromARN(QueueArn, this.service)
         }
         const funcDLQ = functions[configDLQ[functionName].onError]
         if (!funcDLQ) {
@@ -65,6 +84,10 @@ class ServerlessOfflineSQSDLQ {
           DeadLetterQueueArn.arn !== undefined
         ) {
           DeadLetterQueueArn = DeadLetterQueueArn.arn
+        }
+        if (DeadLetterQueueArn['Fn::GetAtt']) {
+          const dlqName = extractQueueNameFromARN(DeadLetterQueueArn, this.service)
+          DeadLetterQueueArn = `arn:aws:sqs:region:XXXXXX:${dlqName}`
         }
 
         if (!DeadLetterQueueArn) {
@@ -86,7 +109,7 @@ class ServerlessOfflineSQSDLQ {
             // eslint-disable-next-line no-await-in-loop
             ;({ QueueUrl } = await client
               .getQueueUrl({
-                QueueName: extractQueueNameFromARN(QueueArn),
+                QueueName,
               })
               .promise())
           } catch (e) {
